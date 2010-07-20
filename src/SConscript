@@ -1,0 +1,18 @@
+import os
+import glob
+
+Import ('env')
+
+prefix = env['PREFIX']
+
+source = [os.path.basename(i) for i in glob.glob('*.cpp')]
+
+if 'mapnik2' in env['LIBS']:
+  target = '../paleoserver2'
+else:
+  target = '../paleoserver'
+
+paleoserver = env.Program(target, source)#, CPPPATH=env['CPPPATH'], LIBS=env['LIBS'])
+
+env.Install(prefix + '/bin', paleoserver)
+env.Alias('install', prefix + '/bin')
