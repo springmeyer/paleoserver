@@ -112,9 +112,13 @@ void request_handler::handle_request(const request& req, reply& rep)
   //}
 
 
+  std::string query;
   size_t breakpoint = request_path.find_first_of("?");
-  if (breakpoint == string::npos) breakpoint = request_path.length();
-  std::string query(request_path.substr(breakpoint+1, request_path.length()));
+  if (breakpoint != string::npos)
+  {
+      query = request_path.substr(breakpoint+1, request_path.length());
+  }
+   
   
   if (query.empty())
   {
