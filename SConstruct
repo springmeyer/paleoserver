@@ -22,7 +22,7 @@ env['CPPPATH'] = ['/usr/local/include','/usr/local/Cellar/icu4c/4.3.1/include/']
 env['LIBPATH'] = ['/usr/local/lib','/usr/local/Cellar/icu4c/4.3.1/lib/']
 
 # add freetype paths
-env.ParseConfig('freetype-config --libs --cppflags')
+env.ParseConfig('freetype-config --libs --cflags')
 
 if mapnik == 'mapnik2':
     pass#env.ParseConfig('mapnik-config --libs --cppflags')
