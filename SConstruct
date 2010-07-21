@@ -1,8 +1,13 @@
 import os
 import sys
 
-env = Environment(ENV=os.environ)
+## SETTINGS ##
+DEBUG = False
+mapnik = 'mapnik2'
+#mapnik = 'mapnik'
 env['PREFIX'] = '/usr/local'
+
+env = Environment(ENV=os.environ)
 
 command_line_args = sys.argv[1:]
 
@@ -11,14 +16,15 @@ HELP_REQUESTED = False
 if ('-h' in command_line_args) or ('--help' in command_line_args):
     HELP_REQUESTED = True
 
-#env.ParseConfig('mapnik-config --libs --cppflags')
-
-mapnik = 'mapnik2'
-#mapnik = 'mapnik'
-
 env['LIBS'] = [mapnik,'icuuc','boost_filesystem','boost_regex','boost_system','boost_thread']
-env['CPPPATH'] = ['/usr/local/include','/usr/local/Cellar/icu4c/4.3.1/include/','/Library/Frameworks/FreeType.framework/unix/include']
+env['CPPPATH'] = ['/usr/local/include','/usr/local/Cellar/icu4c/4.3.1/include/']
 env['LIBPATH'] = ['/usr/local/lib','/usr/local/Cellar/icu4c/4.3.1/lib/']
+
+# add freetype paths
+env.ParseConfig('freetype-config --libs --cppflags')
+
+if mapnik == 'mapnik2':
+    pass#env.ParseConfig('mapnik-config --libs --cppflags')
 
 cppflags = '-O3 -ansi -Wall'
 
@@ -36,8 +42,11 @@ cppflags += ' -DMAP_PER_IO'
 #cppflags += ' -DMAP_REQUEST'
 
 # turn on debug output
-#cppflags += ' -DPALEO_DEBUG'
-
+if DEBUG:
+    cppflags += ' -g -DDEBUG -DPALEO_DEBUG'
+else:
+    cppflags += ' -DNDEBUG'
+    
 env['CPPFLAGS'] = cppflags
 
 
