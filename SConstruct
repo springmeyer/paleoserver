@@ -5,9 +5,10 @@ import sys
 DEBUG = False
 mapnik = 'mapnik2'
 #mapnik = 'mapnik'
-env['PREFIX'] = '/usr/local'
 
 env = Environment(ENV=os.environ)
+
+env['PREFIX'] = '/usr/local'
 
 command_line_args = sys.argv[1:]
 
