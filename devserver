@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# common defaults for development server testing
+
+if [ $1 ]; then
+      echo "running: ./paleoserver2 0.0.0.0 8000 2 . /usr/local/lib/mapnik2 $1"
+      ./paleoserver2 0.0.0.0 8000 2 . /usr/local/lib/mapnik2 $@
+    else
+      echo 'usage: devserver <stylesheet.xml>';
+      exit 1;
+fi
