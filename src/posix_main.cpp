@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
         address = pt.get_optional<std::string>("address");
         if (!address)
         {
-          std::cerr << "Config error: please provide a the path to a 'stylesheet' to load in "
+          std::cerr << "Config error: please provide a server 'address' (e.g. 0.0.0.0) in "
               << json_config << std::endl;
           config_errors = true;
         }
@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
         port = pt.get_optional<std::string>("port");
         if (!port)
         {
-          std::cerr << "Config error: please provide a server port to mount on in "
+          std::cerr << "Config error: please provide a server 'port' to mount on in "
               << json_config << std::endl;
           config_errors = true;
         }
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
         doc_root = pt.get_optional<std::string>("doc_root");
         if (!doc_root)
         {
-          std::cerr << "Config error: please provide a document root in "
+          std::cerr << "Config error: please provide a document root ('doc_root') in "
               << json_config << std::endl;
           config_errors = true;
         }
