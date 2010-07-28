@@ -20,13 +20,22 @@
 #include <mapnik/load_map.hpp>
 #endif
 
+#if MAPNIK_VERSION >= 800
+   #include <mapnik/box2d.hpp>
+   #define Envelope box2d
+#else
+   #include <mapnik/envelope.hpp>
+   #define box2d Envelope
+#endif
 
 namespace http {
 namespace paleoserver {
 
 server::server(const std::string& address, const std::string& port,
     const std::string& doc_root, std::size_t io_service_pool_size,
-    const std::string& stylesheet)
+    const std::string& stylesheet,
+    boost::optional<mapnik::box2d<double> > max_extent
+    )
 #if MAP_PER_IO
   : io_service_pool_(io_service_pool_size,stylesheet),
     acceptor_(io_service_pool_.get_io_service()),
@@ -53,7 +62,8 @@ server::server(const std::string& address, const std::string& port,
       boost::bind(&server::handle_accept, this,
         boost::asio::placeholders::error));
   
-  //init_mapnik();
+  if (max_extent) request_handler_.set_max_extent(*max_extent);
+  
 #if MAP_PER_IO
   // maps will be loaded per thread later
 #else

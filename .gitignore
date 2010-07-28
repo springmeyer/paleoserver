@@ -1,0 +1,8 @@
+.sconf_temp/
+.sconsign.dblite
+archive
+*.o
+*.os
+*.pyc
+.DS_Store
+

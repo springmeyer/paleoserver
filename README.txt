@@ -7,7 +7,7 @@ old school wms for mapnik.
 Requires
 --------
 
-* Mapnik 0.7.2 / Mapnik2
+* Mapnik 0.7.2 (http://svn.mapnik.org/branches/0.7.2-dev/) / Mapnik2 (http://svn.mapnik.org/trunk)
 * Boost 1.42 (for spirit2)
 * Scons (for build)
 
@@ -51,6 +51,7 @@ Caveats
 
 ToDo
 ----
+* Modify mapnik to be able to send a query bbox different than the map extent
 * Automated builds using different options (mapnik vs. mapnik2)
 * Support params:
   - srs ?

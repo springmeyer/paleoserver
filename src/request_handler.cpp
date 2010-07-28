@@ -75,6 +75,16 @@ void request_handler::set_map(mapnik::Map mapnik_map)
 }
 #endif
 
+void request_handler::set_max_extent(const mapnik::box2d<double>& bbox)
+{
+    max_extent_ = bbox;
+}
+
+boost::optional<mapnik::box2d<double> > request_handler::max_extent() const
+{
+    return max_extent_;
+}
+
 #if MAP_PER_IO
 void request_handler::handle_request(const request& req, reply& rep, mapnik::Map map_)
 #else
@@ -133,18 +143,6 @@ void request_handler::handle_request(const request& req, reply& rep)
 
   wms_query wms_query(query);
 
-  boost::optional<unsigned> w = wms_query.width();
-  boost::optional<unsigned> h = wms_query.height();
-
-  if (!w || !h)
-  {
-      rep = reply::reply_html("missing width or height");
-      //rep = reply::stock_reply(reply::bad_request);
-      return;  
-  }
-
-  map_.resize(*w,*h);
-
   boost::optional<std::string> bbox_string = wms_query.get_bbox_string();
   if (!bbox_string)
   {
@@ -152,7 +150,7 @@ void request_handler::handle_request(const request& req, reply& rep)
       //rep = reply::stock_reply(reply::bad_request);
       return;  
   }
-  
+
   boost::optional<Envelope<double> > bbox = wms_query.parse_bbox_string(*bbox_string);
   
   if (!bbox)
@@ -162,45 +160,87 @@ void request_handler::handle_request(const request& req, reply& rep)
       return;  
   }
 
+  boost::optional<unsigned> w = wms_query.width();
+  boost::optional<unsigned> h = wms_query.height();
+
+  if (!w || !h)
+  {
+      std::ostringstream s_error;
+      s_error << "missing width or height. got width value of: " << w
+          << " got height value of: " << h << "\n"; 
+      rep = reply::reply_html(s_error.str());
+      //rep = reply::stock_reply(reply::bad_request);
+      return;  
+  }
+
+  // setup transparent response image
   image_32 im(*w,*h);
-
-#if MAP_PER_IO
-  map_.zoom_to_box(*bbox);
-  agg_renderer<image_32> ren(map_,im);
-
-#else
-
-    #if MAP_REQUEST
-      // requires ripped apart mapnik:Map object...
-      mapnik::request r_(*w,*h);
-      r_.set_srs(map_.srs());
-      r_.set_buffer_size(128);
-      boost::optional<color> const& bg = map_.background();
-      if (bg) r_.set_background(*bg);
+  
+  // check for intersection with max/valid extent
+  boost::optional<mapnik::box2d<double> > bounds = max_extent();
+  bool intersects = true;
+  if (bounds){
+      if (!bounds->intersects(*bbox)) intersects = false;
+      // todo write directly to png/jpeg...
+  }
+  
+  if (intersects)
+  {
+      //setAspectFixMode(mapnik::Map::ADJUST_CANVAS_HEIGHT)
+      map_.resize(*w,*h);
       
-      r_.zoom_to_box(*bbox);
-      // todo, pass only layers and styles?
-      agg_renderer<image_32> ren(map_,im,r_);
-    #else
-    
+      #if MAP_PER_IO
       map_.zoom_to_box(*bbox);
       agg_renderer<image_32> ren(map_,im);
-    
-    #endif
-
-#endif
-
-#if PALEO_DEBUG
-  std::clog << "rendering... \n";
-#endif
-
-  ren.apply();
+      
+      #else
+      
+        #if MAP_REQUEST
+          // requires ripped apart mapnik:Map object...
+          mapnik::request r_(*w,*h);
+          r_.set_srs(map_.srs());
+          r_.set_buffer_size(128);
+          boost::optional<color> const& bg = map_.background();
+          if (bg) r_.set_background(*bg);
+          
+          r_.zoom_to_box(*bbox);
+          // todo, pass only layers and styles?
+          // std::vector<layer> & map_.layers()
+          // setActive(true)
+          agg_renderer<image_32> ren(map_,im,r_);
+        #else
+          
+          map_.zoom_to_box(*bbox);
+          //map_.set_buffer_size(128);
+          agg_renderer<image_32> ren(map_,im);
+        
+        #endif
+      
+      #endif
+      
+      #if PALEO_DEBUG
+      std::clog << "rendering... \n";
+      #endif
+      
+      ren.apply();
+  }
+  else
+  {
+      boost::optional<color> const& bg = map_.background();
+      if (bg) im.set_background(*bg);
+  }
+  
+  
+  
+  rep.status = reply::ok;
   rep.content = save_to_string(im, "png");;
-  rep.headers.resize(2);
-  rep.headers[0].name = "Content-Length";
-  rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
-  rep.headers[1].name = "Content-Type";
-  rep.headers[1].value = mime_types::extension_to_type("png");
+  rep.headers.resize(3);
+  rep.headers[0].name = "Content-Type";
+  rep.headers[0].value = "image/png";
+  rep.headers[1].name = "Server";
+  rep.headers[1].value = "PaleoServer/0.1.0";
+  rep.headers[2].name = "Content-Length";
+  rep.headers[2].value = boost::lexical_cast<std::string>(rep.content.size());
 }
 
 bool request_handler::url_decode(const std::string& in, std::string& out)

@@ -20,11 +20,11 @@ struct mapping
   const char* mime_type;
 } mappings[] =
 {
+  { "png", "image/png" },
+  { "jpg", "image/jpeg" },
   { "gif", "image/gif" },
   { "htm", "text/html" },
   { "html", "text/html" },
-  { "jpg", "image/jpeg" },
-  { "png", "image/png" },
   { 0, 0 } // Marks end of list.
 };
 

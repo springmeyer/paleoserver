@@ -1,5 +1,6 @@
 #include "uri_parser.hpp"
 #include "uri_grammer.hpp"
+#include "map_utils.hpp"
 
 // clog
 #include <iostream>
@@ -64,41 +65,7 @@ wms_query::wms_query(const std::string& query)
 
   boost::optional<Envelope<double> > wms_query::parse_bbox_string(const std::string& bbox_string)
   {
-    
-      boost::optional<Envelope<double> > result;
-      boost::char_separator<char> sep(",");
-      boost::tokenizer<boost::char_separator<char> > tok(bbox_string,sep);
-      unsigned i = 0;
-      bool success = false; 
-      double d[4];
-      for (boost::tokenizer<boost::char_separator<char> >::iterator beg=tok.begin(); 
-           beg!=tok.end();++beg)
-      {
-          try 
-          {
-              d[i] = boost::lexical_cast<double>(boost::trim_copy(*beg));
-          }
-          catch (boost::bad_lexical_cast & ex)
-          {
-              std::clog << *beg << " : " << ex.what() << "\nAre your coordinates each separated by commas?\n";
-              break;
-          }
-          if (i==3) 
-          {
-              success = true;
-              break;
-          }
-          ++i;
-      }
-            
-      if (success)
-      {
-        Envelope<double> bbox(d[0],d[1],d[2],d[3]);
-        result.reset(bbox);
-        return result;
-      }
-      
-      return result;
+      return map_utils::parse_bbox_from_string(bbox_string);
   }
   
   /*static boost::optional<color>& bgcolor()

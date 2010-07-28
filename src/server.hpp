@@ -32,7 +32,9 @@ public:
   /// serve up files from the given directory.
   explicit server(const std::string& address, const std::string& port,
       const std::string& doc_root, std::size_t io_service_pool_size,
-      const std::string& stylesheet);
+      const std::string& stylesheet,
+      boost::optional<mapnik::box2d<double> > max_extent
+      );
 
   /// Run the server's io_service loop.
   void run();

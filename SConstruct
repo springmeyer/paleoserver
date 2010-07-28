@@ -21,6 +21,8 @@ env['LIBS'] = [mapnik,'icuuc','boost_filesystem','boost_regex','boost_system','b
 env['CPPPATH'] = ['/usr/local/include','/usr/local/Cellar/icu4c/4.3.1/include/']
 env['LIBPATH'] = ['/usr/local/lib','/usr/local/Cellar/icu4c/4.3.1/lib/']
 
+#env['CXX'] = 'clang++ -v'
+
 # add freetype paths
 env.ParseConfig('freetype-config --libs --cflags')
 

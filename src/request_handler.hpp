@@ -16,6 +16,15 @@
 
 // mapnik
 #include <mapnik/map.hpp>
+#include <mapnik/version.hpp>
+
+#if MAPNIK_VERSION >= 800
+   #include <mapnik/box2d.hpp>
+   #define Envelope box2d
+#else
+   #include <mapnik/envelope.hpp>
+   #define box2d Envelope
+#endif
 
 namespace http {
 namespace paleoserver {
@@ -42,6 +51,9 @@ public:
   void set_map(mapnik::Map mapnik_map);
 #endif
 
+  void set_max_extent(const mapnik::box2d<double>& bbox);
+
+  boost::optional<mapnik::box2d<double> > max_extent() const;
 private:
   /// The directory containing the files to be served.
   std::string doc_root_;
@@ -50,6 +62,8 @@ private:
 #else
   mapnik::Map map_;
 #endif
+
+  boost::optional<mapnik::box2d<double> > max_extent_;
 
   /// Perform URL-decoding on a string. Returns false if the encoding was
   /// invalid.

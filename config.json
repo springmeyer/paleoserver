@@ -1,0 +1,31 @@
+/** json configuration for paleoserver */
+
+/** warning the format of this file is in contant flux */
+
+{
+    /** required: directory to register mapnik fonts */
+    "fonts"      : "/usr/local/lib/mapnik2/fonts/",
+    
+    /** required: directory to register mapnik input plugins */
+    "plugins"    : "/usr/local/lib/mapnik2/input/",
+    
+    /** required: number of threads to support - should match roughly number of CPU + 1 */
+    "threads"    :  2,
+    
+    /** required: address to bind to */
+    "address"    : "0.0.0.0",
+    
+    /** required: port to bind to */
+    "port"       : "8000",
+    
+    /** required: document root of server */
+    "doc_root"   : ".",
+    
+    /** required: mapnik xml stylesheet to load */
+    "stylesheet" : "tests/demo.xml"
+    
+    // optional: limit all requests to given extent (must be in request srs)
+    //"max_extent" : "-180,60,180,60"
+    
+    /** NOTE: last option cannot end with trailing comma */
+}

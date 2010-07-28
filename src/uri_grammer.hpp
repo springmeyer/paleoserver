@@ -13,6 +13,7 @@
 // second does not initialize the optional holding the value.
 //
 // For a more elaborate explanation see here: http://spirit.sourceforge.net/home/?p=371
+// http://boost-spirit.com/home/2010/02/24/parsing-skippers-and-skipping-parsers/
 
 #ifndef PALEOSERVER_GRAMMER_HPP
 #define PALEOSERVER_GRAMMER_HPP
