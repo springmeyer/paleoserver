@@ -8,15 +8,23 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+
+// stl
 #include <iostream>
 #include <string>
+
+// boost
 #include <boost/asio.hpp>
 #include <boost/version.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/optional.hpp>
 
+// paleoserver
 #include "server.hpp"
 #include "map_utils.hpp"
 
@@ -33,10 +41,6 @@
 #endif
 
 #define PALEO_VERSION 100
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/optional.hpp>
 
 #if !defined(_WIN32)
 

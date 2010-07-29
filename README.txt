@@ -69,7 +69,7 @@ Can mostly handle WMS 1.1.1 requests from Openlayers like:
 
 http://127.0.0.1:8000/?LAYERS=countries&STYLES=&FORMAT=image%2Fpng&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&EXCEPTIONS=application%2Fvnd.ogc.se_inimage&SRS=EPSG%3A900913&BBOX=713309.35838188,4863472.8980582,4863472.8980583,9013636.4377346&WIDTH=256&HEIGHT=256
 
-but only knows about bbox and dimensions.
+but only knows about bbox, dimensions, and layers.
 
 
 Caveats
@@ -78,7 +78,7 @@ Caveats
 * Does not handle values with spaces, even if encoded
 * Likely to crash, requires kill -9 to stop all threads
 * If it hangs, make sure you are loading ABI-compatible datasources
-* Only supports BBOX, WIDTH, HEIGHT - all other WMS params ignored
+* Only supports BBOX, WIDTH, HEIGHT, LAYERS - all other WMS params ignored
 
 
 ToDo

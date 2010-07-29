@@ -8,17 +8,20 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+// paleoserver
+#include "uri_parser.hpp"
 #include "request_handler.hpp"
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <boost/lexical_cast.hpp>
 #include "mime_types.hpp"
 #include "reply.hpp"
 #include "request.hpp"
 
-
+//stl
+#include <fstream>
+#include <sstream>
+#include <string>
 #include <iostream>
+
+// mapnik
 
 #include <mapnik/version.hpp>
 #include <mapnik/map.hpp>
@@ -28,7 +31,6 @@
 #include <mapnik/color_factory.hpp>
 #include <mapnik/image_util.hpp>
 #include <mapnik/load_map.hpp>
-
 
 #if MAPNIK_VERSION >= 800
    #include <mapnik/box2d.hpp>
@@ -43,13 +45,12 @@
    #define box2d Envelope
 #endif
 
-#include "uri_parser.hpp"
 
-// parsing
 // boost
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 
 
@@ -121,7 +122,6 @@ void request_handler::handle_request(const request& req, reply& rep)
   //  request_path += "index.html";
   //}
 
-
   std::string query;
   size_t breakpoint = request_path.find_first_of("?");
   if (breakpoint != string::npos)
@@ -129,7 +129,6 @@ void request_handler::handle_request(const request& req, reply& rep)
       query = request_path.substr(breakpoint+1, request_path.length());
   }
    
-  
   if (query.empty())
   {
     std::string msg("Ready to accept Query");
@@ -173,8 +172,13 @@ void request_handler::handle_request(const request& req, reply& rep)
       return;  
   }
 
-  // setup transparent response image
-  image_32 im(*w,*h);
+
+  std::string layer_string = wms_query.get_layer_string();
+  if (layer_string.empty())
+  {
+      rep = reply::reply_html("missing layers");
+      return;  
+  }
   
   // check for intersection with max/valid extent
   boost::optional<mapnik::box2d<double> > bounds = max_extent();
@@ -183,14 +187,37 @@ void request_handler::handle_request(const request& req, reply& rep)
       if (!bounds->intersects(*bbox)) intersects = false;
       // todo write directly to png/jpeg...
   }
+
+  // setup transparent response image
+  image_32 im(*w,*h);
   
   if (intersects)
   {
+      // handle layers
+      if (boost::algorithm::iequals(layer_string,"__all__"))
+      {
+          BOOST_FOREACH ( layer & lyr, map_.layers() )
+          {
+              lyr.setActive(true);
+          }
+      }
+      else
+      {
+          // convert comma separated layers to vector
+          std::set<std::string> layer_names = wms_query.parse_layer_string(layer_string);
+          BOOST_FOREACH ( layer & lyr, map_.layers() )
+          {
+              bool requested = (layer_names.find(lyr.name()) != layer_names.end());
+              lyr.setActive(requested);
+          }
+      }
+      
       //setAspectFixMode(mapnik::Map::ADJUST_CANVAS_HEIGHT)
       map_.resize(*w,*h);
       
       #if MAP_PER_IO
       map_.zoom_to_box(*bbox);
+
       agg_renderer<image_32> ren(map_,im);
       
       #else
@@ -229,8 +256,6 @@ void request_handler::handle_request(const request& req, reply& rep)
       boost::optional<color> const& bg = map_.background();
       if (bg) im.set_background(*bg);
   }
-  
-  
   
   rep.status = reply::ok;
   rep.content = save_to_string(im, "png");;

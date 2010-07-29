@@ -9,6 +9,8 @@
 #include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 
+#include <set>
+
 #include <mapnik/version.hpp>
 
 #if MAPNIK_VERSION >= 800
@@ -41,8 +43,10 @@ public:
   explicit wms_query(const std::string& request_path);
   
   boost::optional<std::string>  get_bbox_string();
+  std::string get_layer_string();
   //static boost::optional<color>& bgcolor();
   boost::optional<Envelope<double> > parse_bbox_string(const std::string& bbox_string);
+  std::set<std::string> parse_layer_string(const std::string& layer_string);
   boost::optional<unsigned> width();
   boost::optional<unsigned> height();
   

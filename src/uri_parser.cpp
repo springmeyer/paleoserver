@@ -67,6 +67,33 @@ wms_query::wms_query(const std::string& query)
   {
       return map_utils::parse_bbox_from_string(bbox_string);
   }
+
+  std::set<std::string> wms_query::parse_layer_string(const std::string& layer_string)
+  {
+
+    std::set<std::string> result;
+    boost::char_separator<char> sep(",");
+    boost::tokenizer<boost::char_separator<char> > tok(layer_string,sep);
+    for (boost::tokenizer<boost::char_separator<char> >::iterator beg=tok.begin(); 
+         beg!=tok.end();++beg)
+    {
+        try 
+        {
+            std::string layer_name = boost::trim_copy(*beg);
+            if (!layer_name.empty())
+            {
+                result.insert(layer_name);
+            }
+        }
+        catch (boost::bad_lexical_cast & ex)
+        {
+            std::clog << *beg << " : " << ex.what() << "\n";
+            break;
+        }
+    }
+    return result;
+
+  }
   
   /*static boost::optional<color>& bgcolor()
   {
@@ -81,6 +108,19 @@ wms_query::wms_query(const std::string& query)
       if (itr != params_.end())
       {
           result.reset(itr->second);
+          return result;
+      }
+      return result;
+  }   
+
+  std::string wms_query::get_layer_string()
+  {
+
+      std::string result("");
+      iterator_type itr = params_.find("layers");
+      if (itr != params_.end())
+      {
+          result = itr->second;
           return result;
       }
       return result;
