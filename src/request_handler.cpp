@@ -43,6 +43,8 @@
    #define image_32 Image32
    #define image_data_32 ImageData32
    #define box2d Envelope
+   #define layer Layer
+   #define set_background setBackground
 #endif
 
 
@@ -92,6 +94,11 @@ void request_handler::handle_request(const request& req, reply& rep, mapnik::Map
 void request_handler::handle_request(const request& req, reply& rep)
 #endif
 {
+
+#if PALEO_DEBUG
+  std::clog << "handling request...\n";
+#endif
+
   // Decode url to path.
   std::string request_path;
   if (!url_decode(req.uri, request_path))

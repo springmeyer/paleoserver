@@ -40,7 +40,13 @@ io_service_pool::io_service_pool(std::size_t pool_size, std::string stylesheet)
     std::clog << "setting up io service #" << i <<" \n";
 #endif
     map_service_ptr map_service(new mapnik::Map(1,1));
+#if PALEO_DEBUG
+  std::clog << "loading map: " << stylesheet_ << "\n";
+#endif
     mapnik::load_map(*map_service,stylesheet_);
+#if PALEO_DEBUG
+  std::clog << "map loaded..\n";
+#endif
     map_services_.push_back(map_service);
   }
   

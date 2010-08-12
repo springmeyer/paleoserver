@@ -5,6 +5,7 @@ import sys
 DEBUG = False
 mapnik = 'mapnik2'
 #mapnik = 'mapnik'
+FRAMEWORK = False
 
 env = Environment(ENV=os.environ)
 
@@ -21,6 +22,11 @@ env['LIBS'] = [mapnik,'icuuc','boost_filesystem','boost_regex','boost_system','b
 env['CPPPATH'] = ['/usr/local/include','/usr/local/Cellar/icu4c/4.3.1/include/']
 env['LIBPATH'] = ['/usr/local/lib','/usr/local/Cellar/icu4c/4.3.1/lib/']
 
+if FRAMEWORK:
+  fm_path = '/Library/Frameworks/Mapnik.framework/Versions/Current/unix/'
+  env['CPPPATH'].insert(0,'%sinclude' % fm_path)
+  env['LIBPATH'].insert(0,'%slib' % fm_path)  
+
 #env['CXX'] = 'clang++ -v'
 
 # add freetype paths
@@ -28,6 +34,9 @@ env.ParseConfig('freetype-config --libs --cflags')
 
 if mapnik == 'mapnik2':
     pass#env.ParseConfig('mapnik-config --libs --cppflags')
+else:
+    if not FRAMEWORK:
+        env['CPPPATH'].insert(0,'/Users/dane/projects/mapnik-dev/0.7.2-dev/include/')
 
 cppflags = '-O3 -ansi -Wall'
 

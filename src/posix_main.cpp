@@ -30,7 +30,6 @@
 
 // mapnik
 #include <mapnik/datasource_cache.hpp>
-#include <mapnik/font_engine_freetype.hpp>
 
 #if MAPNIK_VERSION >= 800
    #include <mapnik/box2d.hpp>
@@ -47,7 +46,17 @@
 #include <pthread.h>
 #include <signal.h>
 
+#include <mapnik/font_engine_freetype.hpp>
+
 using namespace mapnik;
+
+#if MAPNIK_VERSION <= 701
+#include "compatibility.hpp"
+using http::paleoserver::register_fonts;
+#else
+#define register_fonts mapnik::freetype_engine::register_fonts;
+#endif
+
 using boost::optional;
 using boost::property_tree::ptree;
 
@@ -126,7 +135,7 @@ int main(int argc, char* argv[])
         mapnik_dir.reset(argv[5]);
         if (mapnik_dir)
         {
-            freetype_engine::register_fonts(*mapnik_dir + "/fonts");
+            register_fonts(*mapnik_dir + "/fonts",false);
             datasource_cache::instance()->register_datasources(*mapnik_dir + "/input");
         }
       
@@ -233,7 +242,7 @@ int main(int argc, char* argv[])
         }
     
         // register font faces
-        freetype_engine::register_fonts(*fonts);
+        register_fonts(*fonts,true);
     
         // plugin config
         plugins = pt.get_optional<std::string>("plugins");

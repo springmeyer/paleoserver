@@ -24,10 +24,11 @@
             map = new OpenLayers.Map('map');
             
             var servers = ['http://localhost:8000/']
+            //var servers = ['http://12.189.158.76:8080/']
 
             wms1 = new OpenLayers.Layer.WMS("Test", servers,
                     {
-                        layers: ['Foo'],
+                        layers: ['__all__'],
                         styles:[''],
                         format:'image/png'
                     }, 
