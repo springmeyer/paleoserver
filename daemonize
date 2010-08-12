@@ -1,0 +1,3 @@
+#!sh
+# requires http://bmc.github.com/daemonize/
+daemonize -c `pwd` `pwd`/paleoserver2 config.json
