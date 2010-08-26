@@ -53,8 +53,6 @@ using namespace mapnik;
 #if MAPNIK_VERSION <= 701
 #include "compatibility.hpp"
 using http::paleoserver::register_fonts;
-#else
-#define register_fonts mapnik::freetype_engine::register_fonts;
 #endif
 
 using boost::optional;
@@ -94,6 +92,9 @@ int main(int argc, char* argv[])
     // custom max_extent_string and max_extent
     optional<std::string> max_extent_string;
     optional<box2d<double> > max_extent;
+
+    // font list we register
+    std::vector<std::string> face_names;
     
     for (int i = 0; i < argc; ++i)
     {
@@ -135,7 +136,17 @@ int main(int argc, char* argv[])
         mapnik_dir.reset(argv[5]);
         if (mapnik_dir)
         {
-            register_fonts(*mapnik_dir + "/fonts",false);
+
+            #if MAPNIK_VERSION >= 702
+            face_names = mapnik::freetype_engine::face_names();
+            freetype_engine::register_fonts(*mapnik_dir + "/fonts",false);
+            if (!mapnik::freetype_engine::face_names().size() > face_names.size())
+            {
+                std::cerr << "### Warning: Did not sucessfully register any new fonts!\n";
+            }
+            #else
+            register_fonts(*mapnik_dir + "/fonts",false);            
+            #endif
             datasource_cache::instance()->register_datasources(*mapnik_dir + "/input");
         }
       
@@ -242,7 +253,16 @@ int main(int argc, char* argv[])
         }
     
         // register font faces
+        #if MAPNIK_VERSION >= 702
+        face_names = mapnik::freetype_engine::face_names();
+        freetype_engine::register_fonts(*fonts,true);
+        if (!mapnik::freetype_engine::face_names().size() > face_names.size())
+        {
+            std::cerr << "### Warning: Did not sucessfully register any new fonts!\n";
+        }
+        #else
         register_fonts(*fonts,true);
+        #endif
     
         // plugin config
         plugins = pt.get_optional<std::string>("plugins");
