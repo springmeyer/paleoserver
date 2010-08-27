@@ -186,6 +186,12 @@ void request_handler::handle_request(const request& req, reply& rep)
       rep = reply::reply_html("missing layers");
       return;  
   }
+
+  std::string srs = wms_query.get_srs();
+  if (!srs.empty())
+  {
+      map_.set_srs("+init=" + srs);
+  }
   
   // check for intersection with max/valid extent
   boost::optional<mapnik::box2d<double> > bounds = max_extent();
@@ -263,12 +269,18 @@ void request_handler::handle_request(const request& req, reply& rep)
       boost::optional<color> const& bg = map_.background();
       if (bg) im.set_background(*bg);
   }
+
+  std::string mime = wms_query.get_mime();
+  if (mime.empty())
+  {
+      mime = "image/png";
+  }
   
   rep.status = reply::ok;
-  rep.content = save_to_string(im, "png");;
+  rep.content = save_to_string(im, mime_types::type_to_extension(mime));
   rep.headers.resize(3);
   rep.headers[0].name = "Content-Type";
-  rep.headers[0].value = "image/png";
+  rep.headers[0].value = mime;
   rep.headers[1].name = "Server";
   rep.headers[1].value = "PaleoServer/0.1.0";
   rep.headers[2].name = "Content-Length";

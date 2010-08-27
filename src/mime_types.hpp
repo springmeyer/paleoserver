@@ -19,6 +19,7 @@ namespace mime_types {
 
 /// Convert a file extension into a MIME type.
 std::string extension_to_type(const std::string& extension);
+std::string type_to_extension(std::string mime_type);
 
 } // namespace mime_types
 } // namespace paleoserver

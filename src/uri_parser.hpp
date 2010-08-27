@@ -44,6 +44,8 @@ public:
   
   boost::optional<std::string>  get_bbox_string();
   std::string get_layer_string();
+  std::string get_mime();
+  std::string get_srs();
   //static boost::optional<color>& bgcolor();
   boost::optional<Envelope<double> > parse_bbox_string(const std::string& bbox_string);
   std::set<std::string> parse_layer_string(const std::string& layer_string);

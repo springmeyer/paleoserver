@@ -21,7 +21,9 @@ struct mapping
 } mappings[] =
 {
   { "png", "image/png" },
+  { "png8", "image/png8" },
   { "jpg", "image/jpeg" },
+  { "jpeg", "image/jpeg" },
   { "gif", "image/gif" },
   { "htm", "text/html" },
   { "html", "text/html" },
@@ -38,7 +40,33 @@ std::string extension_to_type(const std::string& extension)
     }
   }
 
-  return "text/plain";
+  return "image/png";
+}
+
+struct r_mapping
+{
+  const char* mime_type;
+  const char* extension;
+} r_mappings[] =
+{
+  { "image/png", "png" },
+  { "image/png8", "png8" },
+  { "image/jpeg", "jpeg" },
+  { "image/jpg", "jpeg" },
+  { 0, 0 } // Marks end of list.
+};
+
+std::string type_to_extension(std::string mime_type)
+{
+  for (r_mapping* m = r_mappings; m->mime_type; ++m)
+  {
+    if (m->mime_type == mime_type)
+    {
+      return m->extension;
+    }
+  }
+
+  return "png";
 }
 
 } // namespace mime_types

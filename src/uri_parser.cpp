@@ -125,11 +125,36 @@ wms_query::wms_query(const std::string& query)
       }
       return result;
   }   
+
+  std::string wms_query::get_mime()
+  {
+
+      std::string result("");
+      iterator_type itr = params_.find("format");
+      if (itr != params_.end())
+      {
+          result = itr->second;
+          return result;
+      }
+      return result;
+  }   
+
+  std::string wms_query::get_srs()
+  {
+
+      std::string result("");
+      iterator_type itr = params_.find("srs");
+      if (itr != params_.end())
+      {
+          result = itr->second;
+          return result;
+      }
+      return result;
+  }   
   
   boost::optional<unsigned> wms_query::width()
   {
       boost::optional<unsigned> result;
-      //typedef std::map<std::string, std::string>::const_iterator iterator_type;
       iterator_type itr = params_.find("width");
       if (itr != params_.end())
       {
@@ -143,7 +168,6 @@ wms_query::wms_query(const std::string& query)
   boost::optional<unsigned> wms_query::height()
   {
       boost::optional<unsigned> result;
-      //typedef std::map<std::string, std::string>::const_iterator iterator_type;
       iterator_type itr = params_.find("height");
       if (itr != params_.end())
       {
