@@ -33,11 +33,11 @@
 
             map = new OpenLayers.Map('map', options);
             
-            var servers = ['http://localhost:8000/']
+            var servers = ['http://localhost:8090/']
 
             wms1 = new OpenLayers.Layer.WMS("Test", servers,
                     {
-                        layers: ['Foo'],
+                        layers: ['__all__'],
                         styles:[''],
                         format:'image/png'
                     }, 
@@ -47,7 +47,8 @@
                 );
             
             map.addLayers([wms1]);
-            map.zoomToMaxExtent();     
+            map.zoomToExtent(new OpenLayers.Bounds(229626.387566,5067631.655174,253608.505186,5079536.722327));
+            //map.zoomToMaxExtent();     
         }                
     </script>
   </head>

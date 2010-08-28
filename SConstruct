@@ -28,6 +28,7 @@ if FRAMEWORK:
   env['LIBPATH'].insert(0,'%slib' % fm_path)  
 
 #env['CXX'] = 'clang++ -v'
+#env['CXX'] = 'ccache g++'
 
 # add freetype paths
 env.ParseConfig('freetype-config --libs --cflags')

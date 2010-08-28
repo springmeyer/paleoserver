@@ -207,6 +207,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   if (intersects)
   {
       // handle layers
+      /*
       if (boost::algorithm::iequals(layer_string,"__all__"))
       {
           BOOST_FOREACH ( layer & lyr, map_.layers() )
@@ -225,12 +226,14 @@ void request_handler::handle_request(const request& req, reply& rep)
           }
       }
       
-      //setAspectFixMode(mapnik::Map::ADJUST_CANVAS_HEIGHT)
+      */
+
       map_.resize(*w,*h);
-      
+
       #if MAP_PER_IO
       map_.zoom_to_box(*bbox);
 
+      //map_.set_aspect_fix_mode(mapnik::Map::ADJUST_CANVAS_HEIGHT);
       agg_renderer<image_32> ren(map_,im);
       
       #else
