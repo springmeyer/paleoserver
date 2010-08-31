@@ -21,7 +21,7 @@
 #include "request_handler.hpp"
 #include "request_parser.hpp"
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 #include <mapnik/map.hpp>
 #endif
 
@@ -35,7 +35,7 @@ class connection
 {
 public:
   /// Construct a connection with the given io_service.
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
   explicit connection(boost::asio::io_service& io_service,
       request_handler& handler,
       mapnik::Map map_);
@@ -64,7 +64,7 @@ private:
   /// The handler used to process the incoming request.
   request_handler& request_handler_;
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
   mapnik::Map map_;
 #endif
   /// Buffer for incoming data.

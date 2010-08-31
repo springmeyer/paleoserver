@@ -61,7 +61,7 @@ using namespace mapnik;
 namespace http {
 namespace paleoserver {
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 request_handler::request_handler(const std::string& doc_root)
   : doc_root_(doc_root) {}
 #else
@@ -70,7 +70,7 @@ request_handler::request_handler(const std::string& doc_root)
     map_() {}
 #endif
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 #else
 void request_handler::set_map(mapnik::Map mapnik_map)
 {
@@ -88,14 +88,14 @@ boost::optional<mapnik::box2d<double> > request_handler::max_extent() const
     return max_extent_;
 }
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 void request_handler::handle_request(const request& req, reply& rep, mapnik::Map map_)
 #else
 void request_handler::handle_request(const request& req, reply& rep)
 #endif
 {
 
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
   std::clog << "handling request...\n";
 #endif
 
@@ -143,7 +143,7 @@ void request_handler::handle_request(const request& req, reply& rep)
     return;      
   }
   
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
   std::clog << "query: " << query << "\n";
 #endif
 
@@ -230,7 +230,7 @@ void request_handler::handle_request(const request& req, reply& rep)
 
       map_.resize(*w,*h);
 
-      #if MAP_PER_IO
+      #ifdef MAP_PER_IO
       map_.zoom_to_box(*bbox);
 
       //map_.set_aspect_fix_mode(mapnik::Map::ADJUST_CANVAS_HEIGHT);
@@ -238,7 +238,7 @@ void request_handler::handle_request(const request& req, reply& rep)
       
       #else
       
-        #if MAP_REQUEST
+        #ifdef MAP_REQUEST
           // requires ripped apart mapnik:Map object...
           mapnik::request r_(*w,*h);
           r_.set_srs(map_.srs());
@@ -261,7 +261,7 @@ void request_handler::handle_request(const request& req, reply& rep)
       
       #endif
       
-      #if PALEO_DEBUG
+      #ifdef PALEO_DEBUG
       std::clog << "rendering... \n";
       #endif
       

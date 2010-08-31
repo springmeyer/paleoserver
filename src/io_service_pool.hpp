@@ -25,7 +25,7 @@ class io_service_pool
   : private boost::noncopyable
 {
 public:
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
   /// Construct the io_service pool.
   explicit io_service_pool(std::size_t pool_size, std::string stylesheet);
 #else
@@ -42,7 +42,7 @@ public:
   /// Get an io_service to use.
   boost::asio::io_service& get_io_service();
   
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
   mapnik::Map get_map_service();
 #endif
 
@@ -59,7 +59,7 @@ private:
   /// The next io_service to use for a connection.
   std::size_t next_io_service_;
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
   typedef boost::shared_ptr<mapnik::Map> map_service_ptr;
 
   std::vector<map_service_ptr> map_services_;

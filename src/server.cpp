@@ -14,7 +14,7 @@
 
 
 // mapnik
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 #else
 #include <mapnik/map.hpp>
 #include <mapnik/load_map.hpp>
@@ -36,7 +36,7 @@ server::server(const std::string& address, const std::string& port,
     const std::string& stylesheet,
     boost::optional<mapnik::box2d<double> > max_extent
     )
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
   : io_service_pool_(io_service_pool_size,stylesheet),
     acceptor_(io_service_pool_.get_io_service()),
     new_connection_(new connection(
@@ -64,7 +64,7 @@ server::server(const std::string& address, const std::string& port,
   
   if (max_extent) request_handler_.set_max_extent(*max_extent);
   
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
   // maps will be loaded per thread later
 #else
   mapnik::Map map_(1,1);
@@ -89,7 +89,7 @@ void server::handle_accept(const boost::system::error_code& e)
   if (!e)
   {
     new_connection_->start();
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
     new_connection_.reset(new connection(
           io_service_pool_.get_io_service(), request_handler_, io_service_pool_.get_map_service()));
 #else

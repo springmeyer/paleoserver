@@ -13,14 +13,14 @@
 #include <boost/bind.hpp>
 #include "request_handler.hpp"
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 #include <mapnik/map.hpp>
 #endif
 
 namespace http {
 namespace paleoserver {
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 connection::connection(boost::asio::io_service& io_service,
     request_handler& handler,
     mapnik::Map map)
@@ -62,7 +62,7 @@ void connection::handle_read(const boost::system::error_code& e,
 
     if (result)
     {
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
       request_handler_.handle_request(request_, reply_, map_);
 #else
       request_handler_.handle_request(request_, reply_);

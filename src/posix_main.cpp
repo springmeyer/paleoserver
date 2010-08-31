@@ -50,7 +50,7 @@
 
 using namespace mapnik;
 
-#if MAPNIK_VERSION <= 701
+#ifdef MAPNIK_VERSION <= 701
 #include "compatibility.hpp"
 using http::paleoserver::register_fonts;
 #endif
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
         if (mapnik_dir)
         {
 
-            #if MAPNIK_VERSION >= 702
+            #ifdef MAPNIK_VERSION >= 702
             face_names = mapnik::freetype_engine::face_names();
             freetype_engine::register_fonts(*mapnik_dir + "/fonts",false);
             if (!mapnik::freetype_engine::face_names().size() > face_names.size())
@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
         }
     
         // register font faces
-        #if MAPNIK_VERSION >= 702
+        #ifdef MAPNIK_VERSION >= 702
         face_names = mapnik::freetype_engine::face_names();
         freetype_engine::register_fonts(*fonts,true);
         if (!mapnik::freetype_engine::face_names().size() > face_names.size())

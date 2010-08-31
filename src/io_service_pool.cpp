@@ -16,7 +16,7 @@
 
 #include <iostream>
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 #include <mapnik/map.hpp>
 #include <mapnik/load_map.hpp>
 #else
@@ -25,7 +25,7 @@
 namespace http {
 namespace paleoserver {
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 io_service_pool::io_service_pool(std::size_t pool_size, std::string stylesheet)
   : next_io_service_(0),
     next_map_service_(0),
@@ -36,15 +36,15 @@ io_service_pool::io_service_pool(std::size_t pool_size, std::string stylesheet)
 
   for (std::size_t i = 0; i < pool_size; ++i)
   {
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
     std::clog << "setting up io service #" << i <<" \n";
 #endif
     map_service_ptr map_service(new mapnik::Map(1,1));
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
   std::clog << "loading map: " << stylesheet_ << "\n";
 #endif
     mapnik::load_map(*map_service,stylesheet_);
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
   std::clog << "map loaded..\n";
 #endif
     map_services_.push_back(map_service);
@@ -62,7 +62,7 @@ io_service_pool::io_service_pool(std::size_t pool_size)
   // exit until they are explicitly stopped.
   for (std::size_t i = 0; i < pool_size; ++i)
   {
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
     std::clog << "setting up io service #" << i <<" \n";
 #endif
     io_service_ptr io_service(new boost::asio::io_service);
@@ -78,7 +78,7 @@ void io_service_pool::run()
   std::vector<boost::shared_ptr<boost::thread> > threads;
   for (std::size_t i = 0; i < io_services_.size(); ++i)
   {
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
     std::clog << "running io service #" << i <<" in thread \n";
 #endif
     boost::shared_ptr<boost::thread> thread(new boost::thread(
@@ -101,7 +101,7 @@ void io_service_pool::stop()
 boost::asio::io_service& io_service_pool::get_io_service()
 {
   // Use a round-robin scheme to choose the next io_service to use.
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
   std::clog << "grabbing io service #" << next_io_service_ << "\n";
 #endif
 
@@ -112,11 +112,11 @@ boost::asio::io_service& io_service_pool::get_io_service()
   return io_service;
 }
 
-#if MAP_PER_IO
+#ifdef MAP_PER_IO
 mapnik::Map io_service_pool::get_map_service()
 {
   // Use a round-robin scheme to choose the next io_service to use.
-#if PALEO_DEBUG
+#ifdef PALEO_DEBUG
   std::clog << "grabbing map service #" << next_map_service_ << "\n";
 #endif
   mapnik::Map map_ = *map_services_[next_map_service_];
