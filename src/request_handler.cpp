@@ -240,6 +240,7 @@ void request_handler::handle_request(const request& req, reply& rep)
       
         #ifdef MAP_REQUEST
           // requires ripped apart mapnik:Map object...
+          // http://svn.mapnik.org/branches/map_request/
           mapnik::request r_(*w,*h);
           r_.set_srs(map_.srs());
           r_.set_buffer_size(128);
