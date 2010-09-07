@@ -108,6 +108,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   }
   
   // Request path must be absolute and not contain "..".
+  /*
   if (request_path.empty() || request_path[0] != '/'
       || request_path.find("..") != std::string::npos
       || request_path == "/favicon.ico")
@@ -122,6 +123,7 @@ void request_handler::handle_request(const request& req, reply& rep)
     rep = reply::reply_html(msg);
     return;      
   }
+  */
 
   // If path ends in slash (i.e. is a directory) then add "index.html".
   //if (request_path[request_path.size() - 1] == '/')
@@ -194,12 +196,13 @@ void request_handler::handle_request(const request& req, reply& rep)
   }
   
   // check for intersection with max/valid extent
-  boost::optional<mapnik::box2d<double> > bounds = max_extent();
+  //boost::optional<mapnik::box2d<double> > bounds = max_extent();
   bool intersects = true;
+  /*
   if (bounds){
       if (!bounds->intersects(*bbox)) intersects = false;
       // todo write directly to png/jpeg...
-  }
+  }*/
 
   // setup transparent response image
   image_32 im(*w,*h);
