@@ -50,7 +50,7 @@
 
 using namespace mapnik;
 
-#ifdef MAPNIK_VERSION <= 701
+#if MAPNIK_VERSION <= 701
 #include "compatibility.hpp"
 using http::paleoserver::register_fonts;
 #endif
