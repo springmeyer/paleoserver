@@ -42,15 +42,15 @@ class wms_query
 public:
   explicit wms_query(const std::string& request_path);
   
-  boost::optional<std::string>  get_bbox_string();
-  std::string get_layer_string();
-  std::string get_mime();
-  std::string get_srs();
+  bool get_bbox_string(std::string& bbox_string);
+  bool get_layer_string(std::string& layer_string);
+  bool get_mime(std::string& mime);
+  bool get_srs(std::string& srs);
   //static boost::optional<color>& bgcolor();
-  boost::optional<Envelope<double> > parse_bbox_string(const std::string& bbox_string);
-  std::set<std::string> parse_layer_string(const std::string& layer_string);
-  boost::optional<unsigned> width();
-  boost::optional<unsigned> height();
+  bool parse_bbox_string(Envelope<double>& box, const std::string& bbox_string);
+  void parse_layer_string(std::set<std::string>& layers, const std::string& layer_string);
+  bool get_width(unsigned& w);
+  bool get_height(unsigned& h);
   
 protected:
   Envelope<double> bbox_;

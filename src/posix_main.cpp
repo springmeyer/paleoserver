@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
     
     // custom max_extent_string and max_extent
     optional<std::string> max_extent_string;
-    optional<box2d<double> > max_extent;
+    box2d<double> max_extent;
 
     // font list we register
     std::vector<std::string> face_names;
@@ -280,8 +280,8 @@ int main(int argc, char* argv[])
         max_extent_string = pt.get_optional<std::string>("max_extent");
         if (max_extent_string)
         {
-            max_extent = http::map_utils::parse_bbox_from_string(*max_extent_string);
-            if (!max_extent) config_errors = true;
+            if (!http::map_utils::parse_bbox_from_string(max_extent,*max_extent_string))
+                config_errors = true;
         }
 
     }

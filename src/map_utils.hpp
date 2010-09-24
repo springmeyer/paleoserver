@@ -28,10 +28,10 @@ namespace http {
 namespace map_utils {
 
 
-inline boost::optional<box2d<double> > parse_bbox_from_string(const std::string& bbox_string)
+inline bool parse_bbox_from_string(Envelope<double>& box, const std::string& bbox_string)
 {
   
-    boost::optional<Envelope<double> > result;
+    
     boost::char_separator<char> sep(",");
     boost::tokenizer<boost::char_separator<char> > tok(bbox_string,sep);
     unsigned i = 0;
@@ -59,12 +59,11 @@ inline boost::optional<box2d<double> > parse_bbox_from_string(const std::string&
           
     if (success)
     {
-      Envelope<double> bbox(d[0],d[1],d[2],d[3]);
-      result.reset(bbox);
-      return result;
+      box.init(d[0],d[1],d[2],d[3]);
+      return true;
     }
     
-    return result;
+    return false;
 }
   
 }

@@ -63,15 +63,14 @@ wms_query::wms_query(const std::string& query)
     }
   }
 
-  boost::optional<Envelope<double> > wms_query::parse_bbox_string(const std::string& bbox_string)
+  bool wms_query::parse_bbox_string(Envelope<double>& box, const std::string& bbox_string)
   {
-      return map_utils::parse_bbox_from_string(bbox_string);
+      return map_utils::parse_bbox_from_string(box, bbox_string);
   }
 
-  std::set<std::string> wms_query::parse_layer_string(const std::string& layer_string)
+  void wms_query::parse_layer_string(std::set<std::string>& layers, const std::string& layer_string)
   {
 
-    std::set<std::string> result;
     boost::char_separator<char> sep(",");
     boost::tokenizer<boost::char_separator<char> > tok(layer_string,sep);
     for (boost::tokenizer<boost::char_separator<char> >::iterator beg=tok.begin(); 
@@ -82,7 +81,7 @@ wms_query::wms_query(const std::string& query)
             std::string layer_name = boost::trim_copy(*beg);
             if (!layer_name.empty())
             {
-                result.insert(layer_name);
+                layers.insert(layer_name);
             }
         }
         catch (boost::bad_lexical_cast & ex)
@@ -91,7 +90,6 @@ wms_query::wms_query(const std::string& query)
             break;
         }
     }
-    return result;
 
   }
   
@@ -100,82 +98,70 @@ wms_query::wms_query(const std::string& query)
       
   }*/
 
-  boost::optional<std::string> wms_query::get_bbox_string()
+  bool wms_query::get_bbox_string(std::string& bbox_string)
   {
-
-      boost::optional<std::string> result;
       iterator_type itr = params_.find("bbox");
       if (itr != params_.end())
       {
-          result.reset(itr->second);
-          return result;
+          bbox_string = itr->second;
+          return true;
       }
-      return result;
+      return false;
   }   
 
-  std::string wms_query::get_layer_string()
+  bool wms_query::get_layer_string(std::string& layer_string)
   {
-
-      std::string result("");
       iterator_type itr = params_.find("layers");
       if (itr != params_.end())
       {
-          result = itr->second;
-          return result;
+          layer_string = itr->second;
+          return true;
       }
-      return result;
+      return false;
   }   
 
-  std::string wms_query::get_mime()
+  bool wms_query::get_mime(std::string& mime)
   {
-
-      std::string result("");
       iterator_type itr = params_.find("format");
       if (itr != params_.end())
       {
-          result = itr->second;
-          return result;
+          mime = itr->second;
+          return true;
       }
-      return result;
+      return false;
   }   
 
-  std::string wms_query::get_srs()
+  bool wms_query::get_srs(std::string& srs)
   {
-
-      std::string result("");
       iterator_type itr = params_.find("srs");
       if (itr != params_.end())
       {
-          result = itr->second;
-          return result;
+          srs = itr->second;
+          return true;
       }
-      return result;
+      return false;
   }   
   
-  boost::optional<unsigned> wms_query::width()
+  bool wms_query::get_width(unsigned& w)
   {
-      boost::optional<unsigned> result;
       iterator_type itr = params_.find("width");
       if (itr != params_.end())
       {
-          unsigned w = atoi(itr->second.c_str());
-          result.reset(w);
-          return result;
+          w = atoi(itr->second.c_str());
+          return true;
       }
-      return result;  
+      return false;
   }
   
-  boost::optional<unsigned> wms_query::height()
+  bool wms_query::get_height(unsigned& h)
   {
-      boost::optional<unsigned> result;
       iterator_type itr = params_.find("height");
       if (itr != params_.end())
       {
-          unsigned h = atoi(itr->second.c_str());
-          result.reset(h);
-          return result;
+          h = atoi(itr->second.c_str());
+          return true;
       }
-      return result;  
+      return false;
   }
 
 

@@ -151,27 +151,25 @@ void request_handler::handle_request(const request& req, reply& rep)
 
   wms_query wms_query(query);
 
-  boost::optional<std::string> bbox_string = wms_query.get_bbox_string();
-  if (!bbox_string)
+  std::string bbox_string;
+  if (!wms_query.get_bbox_string(bbox_string))
   {
       rep = reply::reply_html("missing bbox");
-      //rep = reply::stock_reply(reply::bad_request);
       return;  
   }
 
-  boost::optional<Envelope<double> > bbox = wms_query.parse_bbox_string(*bbox_string);
-  
-  if (!bbox)
+  Envelope<double> bbox;
+  if (!wms_query.parse_bbox_string(bbox,bbox_string))
   {
       rep = reply::reply_html("failed to parse bbox");
       //rep = reply::stock_reply(reply::bad_request);
       return;  
   }
 
-  boost::optional<unsigned> w = wms_query.width();
-  boost::optional<unsigned> h = wms_query.height();
+  unsigned w;
+  unsigned h;
 
-  if (!w || !h)
+  if (!wms_query.get_width(w) || !wms_query.get_height(h))
   {
       std::ostringstream s_error;
       s_error << "missing width or height. got width value of: " << w
@@ -182,18 +180,21 @@ void request_handler::handle_request(const request& req, reply& rep)
   }
 
 
-  std::string layer_string = wms_query.get_layer_string();
-  if (layer_string.empty())
+  std::string layer_string;
+  if (!wms_query.get_layer_string(layer_string))
   {
       rep = reply::reply_html("missing layers");
       return;  
   }
 
-  std::string srs = wms_query.get_srs();
-  if (!srs.empty())
+  std::string srs;
+  if (!wms_query.get_srs(srs))
   {
-      map_.set_srs("+init=" + srs);
+      rep = reply::reply_html("missing srs");
+      return;
   }
+
+  map_.set_srs("+init=" + srs);
   
   // check for intersection with max/valid extent
   //boost::optional<mapnik::box2d<double> > bounds = max_extent();
@@ -205,12 +206,11 @@ void request_handler::handle_request(const request& req, reply& rep)
   }*/
 
   // setup transparent response image
-  image_32 im(*w,*h);
+  image_32 im(w,h);
   
   if (intersects)
   {
       // handle layers
-      /*
       if (boost::algorithm::iequals(layer_string,"__all__"))
       {
           BOOST_FOREACH ( layer & lyr, map_.layers() )
@@ -221,20 +221,19 @@ void request_handler::handle_request(const request& req, reply& rep)
       else
       {
           // convert comma separated layers to vector
-          std::set<std::string> layer_names = wms_query.parse_layer_string(layer_string);
+          std::set<std::string> layer_names;
+          wms_query.parse_layer_string(layer_names, layer_string);
           BOOST_FOREACH ( layer & lyr, map_.layers() )
           {
               bool requested = (layer_names.find(lyr.name()) != layer_names.end());
               lyr.setActive(requested);
           }
       }
-      
-      */
 
-      map_.resize(*w,*h);
+      map_.resize(w,h);
 
       #ifdef MAP_PER_IO
-      map_.zoom_to_box(*bbox);
+      map_.zoom_to_box(bbox);
 
       //map_.set_aspect_fix_mode(mapnik::Map::ADJUST_CANVAS_HEIGHT);
       agg_renderer<image_32> ren(map_,im);
@@ -244,20 +243,20 @@ void request_handler::handle_request(const request& req, reply& rep)
         #ifdef MAP_REQUEST
           // requires ripped apart mapnik:Map object...
           // http://svn.mapnik.org/branches/map_request/
-          mapnik::request r_(*w,*h);
+          mapnik::request r_(w,h);
           r_.set_srs(map_.srs());
           r_.set_buffer_size(128);
           boost::optional<color> const& bg = map_.background();
           if (bg) r_.set_background(*bg);
           
-          r_.zoom_to_box(*bbox);
+          r_.zoom_to_box(bbox);
           // todo, pass only layers and styles?
           // std::vector<layer> & map_.layers()
           // setActive(true)
           agg_renderer<image_32> ren(map_,im,r_);
         #else
           
-          map_.zoom_to_box(*bbox);
+          map_.zoom_to_box(bbox);
           //map_.set_buffer_size(128);
           agg_renderer<image_32> ren(map_,im);
         
@@ -277,8 +276,8 @@ void request_handler::handle_request(const request& req, reply& rep)
       if (bg) im.set_background(*bg);
   }
 
-  std::string mime = wms_query.get_mime();
-  if (mime.empty())
+  std::string mime;
+  if (!wms_query.get_mime(mime))
   {
       mime = "image/png";
   }
