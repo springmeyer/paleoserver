@@ -66,6 +66,7 @@ io_service_pool::io_service_pool(std::size_t pool_size)
     std::clog << "setting up io service #" << i <<" \n";
 #endif
     io_service_ptr io_service(new boost::asio::io_service);
+    //io_service_ptr io_service(new boost::asio::io_service(2 /* concurrency hint*/));
     work_ptr work(new boost::asio::io_service::work(*io_service));
     io_services_.push_back(io_service);
     work_.push_back(work);

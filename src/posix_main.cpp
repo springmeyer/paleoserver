@@ -24,6 +24,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/optional.hpp>
 
+#include <libxml/parser.h>
+
 // paleoserver
 #include "server.hpp"
 #include "map_utils.hpp"
@@ -328,6 +330,10 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  // only call this once, on exit
+  // to make sure valgrind output is clean
+  // http://lists.fedoraproject.org/pipermail/devel/2010-January/129117.html
+  xmlCleanupParser();
   return 0;
 }
 
