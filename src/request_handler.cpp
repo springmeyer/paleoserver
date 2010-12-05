@@ -72,7 +72,7 @@ request_handler::request_handler(const std::string& doc_root)
 
 #ifdef MAP_PER_IO
 #else
-void request_handler::set_map(mapnik::Map mapnik_map)
+void request_handler::set_map(map_ptr mapnik_map)
 {
     map_ = mapnik_map;
 }
@@ -89,7 +89,7 @@ boost::optional<mapnik::box2d<double> > request_handler::max_extent() const
 }
 
 #ifdef MAP_PER_IO
-void request_handler::handle_request(const request& req, reply& rep, mapnik::Map map_)
+void request_handler::handle_request(const request& req, reply& rep, map_ptr map_)
 #else
 void request_handler::handle_request(const request& req, reply& rep)
 #endif
@@ -194,7 +194,7 @@ void request_handler::handle_request(const request& req, reply& rep)
       return;
   }
 
-  map_.set_srs("+init=" + srs);
+  map_->set_srs("+init=" + srs);
   
   // check for intersection with max/valid extent
   //boost::optional<mapnik::box2d<double> > bounds = max_extent();
@@ -213,7 +213,7 @@ void request_handler::handle_request(const request& req, reply& rep)
       // handle layers
       if (boost::algorithm::iequals(layer_string,"__all__"))
       {
-          BOOST_FOREACH ( layer & lyr, map_.layers() )
+          BOOST_FOREACH ( layer & lyr, map_->layers() )
           {
               lyr.setActive(true);
           }
@@ -223,20 +223,20 @@ void request_handler::handle_request(const request& req, reply& rep)
           // convert comma separated layers to vector
           std::set<std::string> layer_names;
           wms_query.parse_layer_string(layer_names, layer_string);
-          BOOST_FOREACH ( layer & lyr, map_.layers() )
+          BOOST_FOREACH ( layer & lyr, map_->layers() )
           {
               bool requested = (layer_names.find(lyr.name()) != layer_names.end());
               lyr.setActive(requested);
           }
       }
 
-      map_.resize(w,h);
+      map_->resize(w,h);
 
       #ifdef MAP_PER_IO
-      map_.zoom_to_box(bbox);
+      map_->zoom_to_box(bbox);
 
-      //map_.set_aspect_fix_mode(mapnik::Map::ADJUST_CANVAS_HEIGHT);
-      agg_renderer<image_32> ren(map_,im);
+      //map_->set_aspect_fix_mode(mapnik::Map::ADJUST_CANVAS_HEIGHT);
+      agg_renderer<image_32> ren(*map_,im);
       
       #else
       
@@ -244,21 +244,21 @@ void request_handler::handle_request(const request& req, reply& rep)
           // requires ripped apart mapnik:Map object...
           // http://svn.mapnik.org/branches/map_request/
           mapnik::request r_(w,h);
-          r_.set_srs(map_.srs());
+          r_.set_srs(map_->srs());
           r_.set_buffer_size(128);
-          boost::optional<color> const& bg = map_.background();
+          boost::optional<color> const& bg = map_->background();
           if (bg) r_.set_background(*bg);
           
           r_.zoom_to_box(bbox);
           // todo, pass only layers and styles?
-          // std::vector<layer> & map_.layers()
+          // std::vector<layer> & map_->layers()
           // setActive(true)
-          agg_renderer<image_32> ren(map_,im,r_);
+          agg_renderer<image_32> ren(*map_,im,r_);
         #else
           
-          map_.zoom_to_box(bbox);
-          //map_.set_buffer_size(128);
-          agg_renderer<image_32> ren(map_,im);
+          map_->zoom_to_box(bbox);
+          //map_->set_buffer_size(128);
+          agg_renderer<image_32> ren(*map_,im);
         
         #endif
       
@@ -272,7 +272,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   }
   else
   {
-      boost::optional<color> const& bg = map_.background();
+      boost::optional<color> const& bg = map_->background();
       if (bg) im.set_background(*bg);
   }
 

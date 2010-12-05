@@ -13,6 +13,8 @@
 #include <boost/bind.hpp>
 
 
+#include <boost/shared_ptr.hpp>
+
 // mapnik
 #ifdef MAP_PER_IO
 #else
@@ -67,9 +69,8 @@ server::server(const std::string& address, const std::string& port,
 #ifdef MAP_PER_IO
   // maps will be loaded per thread later
 #else
-  mapnik::Map map_(1,1);
-  //mapnik::load_map(map_,"/Users/dane/projects/utils/trunk/nik2img/tests/mapfile_wgs84.xml");
-  mapnik::load_map(map_,stylesheet_);
+  boost::shared_ptr<mapnik::Map> map_(new mapnik::Map(256,256));
+  mapnik::load_map(*map_,stylesheet_);
   request_handler_.set_map(map_);
 #endif  
 }

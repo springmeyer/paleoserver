@@ -39,7 +39,7 @@ io_service_pool::io_service_pool(std::size_t pool_size, std::string stylesheet)
 #ifdef PALEO_DEBUG
     std::clog << "setting up io service #" << i <<" \n";
 #endif
-    map_service_ptr map_service(new mapnik::Map(1,1));
+    map_ptr map_service(new mapnik::Map(256,256));
 #ifdef PALEO_DEBUG
   std::clog << "loading map: " << stylesheet_ << "\n";
 #endif
@@ -114,13 +114,13 @@ boost::asio::io_service& io_service_pool::get_io_service()
 }
 
 #ifdef MAP_PER_IO
-mapnik::Map io_service_pool::get_map_service()
+map_ptr io_service_pool::get_map_service()
 {
   // Use a round-robin scheme to choose the next io_service to use.
 #ifdef PALEO_DEBUG
   std::clog << "grabbing map service #" << next_map_service_ << "\n";
 #endif
-  mapnik::Map map_ = *map_services_[next_map_service_];
+  map_ptr map_ = map_services_[next_map_service_];
   ++next_map_service_;
   if (next_map_service_ == map_services_.size())
     next_map_service_ = 0;

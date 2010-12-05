@@ -38,7 +38,7 @@ public:
 #ifdef MAP_PER_IO
   explicit connection(boost::asio::io_service& io_service,
       request_handler& handler,
-      mapnik::Map map_);
+      map_ptr map_);
 #else
   explicit connection(boost::asio::io_service& io_service,
       request_handler& handler);
@@ -65,7 +65,7 @@ private:
   request_handler& request_handler_;
 
 #ifdef MAP_PER_IO
-  mapnik::Map map_;
+  map_ptr map_;
 #endif
   /// Buffer for incoming data.
   boost::array<char, 8192> buffer_;

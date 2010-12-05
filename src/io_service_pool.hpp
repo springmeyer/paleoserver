@@ -43,7 +43,7 @@ public:
   boost::asio::io_service& get_io_service();
   
 #ifdef MAP_PER_IO
-  mapnik::Map get_map_service();
+  map_ptr get_map_service();
 #endif
 
 private:
@@ -60,9 +60,10 @@ private:
   std::size_t next_io_service_;
 
 #ifdef MAP_PER_IO
-  typedef boost::shared_ptr<mapnik::Map> map_service_ptr;
+  //typedef boost::shared_ptr<mapnik::Map> map_service_ptr;
 
-  std::vector<map_service_ptr> map_services_;
+  // TODO - need to make sure we clean up after using this
+  std::vector<map_ptr> map_services_;
 
   /// The next map_service to use for a connection.
   std::size_t next_map_service_;

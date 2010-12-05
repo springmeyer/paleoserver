@@ -23,7 +23,7 @@
         function init(){
             map = new OpenLayers.Map('map');
             
-            var servers = ['http://127.0.0.1:8091/']
+            var servers = ['http://127.0.0.1:8000/']
             //var servers = ['http://12.189.158.76:8080/']
 
             wms1 = new OpenLayers.Layer.WMS("Test", servers,
@@ -38,8 +38,8 @@
                 );
             
             map.addLayers([wms1]);
-            map.zoomToExtent(new OpenLayers.Bounds(1.812545,41.333373,2.389184,41.500070))
-            //map.zoomToMaxExtent();     
+            //map.zoomToExtent(new OpenLayers.Bounds(1.812545,41.333373,2.389184,41.500070))
+            map.zoomToMaxExtent();     
         }                
     </script>
   </head>

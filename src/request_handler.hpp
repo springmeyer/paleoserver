@@ -13,6 +13,7 @@
 
 #include <string>
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 
 // mapnik
 #include <mapnik/map.hpp>
@@ -32,6 +33,9 @@ namespace paleoserver {
 struct reply;
 struct request;
 
+typedef boost::shared_ptr<mapnik::Map> map_ptr;
+//typedef mapnik::Map * map_ptr;
+
 /// The common handler for all incoming requests.
 class request_handler
   : private boost::noncopyable
@@ -42,13 +46,13 @@ public:
 
 #ifdef MAP_PER_IO  
   /// Handle a request and produce a reply.
-  void handle_request(const request& req, reply& rep, mapnik::Map map_);
+  void handle_request(const request& req, reply& rep, map_ptr map_);
 
 #else
   /// Handle a request and produce a reply.
   void handle_request(const request& req, reply& rep);
 
-  void set_map(mapnik::Map mapnik_map);
+  void set_map(map_ptr mapnik_map);
 #endif
 
   void set_max_extent(const mapnik::box2d<double>& bbox);
@@ -60,7 +64,7 @@ private:
 
 #ifdef MAP_PER_IO
 #else
-  mapnik::Map map_;
+  map_ptr map_;
 #endif
 
   boost::optional<mapnik::box2d<double> > max_extent_;

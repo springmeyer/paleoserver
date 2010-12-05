@@ -23,20 +23,22 @@ namespace paleoserver {
 #ifdef MAP_PER_IO
 connection::connection(boost::asio::io_service& io_service,
     request_handler& handler,
-    mapnik::Map map)
+    map_ptr map)
   : socket_(io_service),
     request_handler_(handler),
-    map_(map)
+    map_()
+{
+  map_ = map;
+  //boost::asio::ip::tcp::socket::non_blocking_io non_blocking_io(true);
+  //socket_.io_control(non_blocking_io);
+}
 #else
 connection::connection(boost::asio::io_service& io_service,
     request_handler& handler)
   : socket_(io_service),
     request_handler_(handler)
+{}
 #endif
-{
-  //boost::asio::ip::tcp::socket::non_blocking_io non_blocking_io(true);
-  //socket_.io_control(non_blocking_io);
-}
 
 boost::asio::ip::tcp::socket& connection::socket()
 {
