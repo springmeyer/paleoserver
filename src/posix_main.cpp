@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
         }
     }
     
-    if (!setup_with_json_config && !setup_with_command_options || help_requested )
+    if ((!setup_with_json_config) && (!setup_with_command_options || help_requested) )
     {
       std::cerr << "Usage: " << argv[0] << " <config.json>\n";
       std::cerr << "  or\n";
