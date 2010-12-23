@@ -4,13 +4,20 @@ from SCons.SConf import *
 
 from SCons.Script import *
 
+# library name, either 'mapnik' for Mapnik 0.7.x or 'mapnik2' for Mapnik trunk
+mapnik = 'mapnik'
+#mapnik = 'mapnik'
+
+# build against a Framework install of Mapnik (for osx)
+FRAMEWORK = False
+
+# build with debug output
+DEBUG = False
+
+# Create a map object per thread (required, do not change)
+COPY_MAP_PER_THREAD = True
+
 def main():
-    ## SETTINGS ##
-    DEBUG = False
-    mapnik = 'mapnik2'
-    #mapnik = 'mapnik'
-    COPY_MAP_PER_THREAD = True
-    FRAMEWORK = False
     
     env = Environment(ENV=os.environ)
     
@@ -23,8 +30,6 @@ def main():
     if ('-h' in command_line_args) or ('--help' in command_line_args):
         HELP_REQUESTED = True
     
-    #env['CXX'] = 'clang++'
-    #env['CXX'] = 'ccache g++'
     env['CXX'] = os.environ.get('CXX') or 'g++'
     
     env['LIBS'] = [mapnik,'icuuc','boost_filesystem','boost_regex','boost_system','boost_thread']
@@ -38,13 +43,15 @@ def main():
     
     # add freetype paths
     env.ParseConfig('freetype-config --libs --cflags')
+    
+    # add xml2 paths
     env.ParseConfig('xml2-config --cflags --libs')
     
     if mapnik == 'mapnik2':
         pass#env.ParseConfig('mapnik-config --libs --cppflags')
     else:
         if not FRAMEWORK:
-            env['CPPPATH'].insert(0,'/Users/dane/projects/mapnik-dev/0.7.2-dev/include/')
+            env['CPPPATH'].insert(0,'/usr/local/include/')
     
     cppflags = '-O3 -ansi -Wall'
     
