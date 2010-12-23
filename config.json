@@ -4,10 +4,10 @@
 
 {
     /** required: directory to register mapnik fonts */
-    "fonts"      : "/usr/local/lib/mapnik2/fonts/",
+    "fonts"      : "/usr/local/lib/mapnik/fonts/",
     
     /** required: directory to register mapnik input plugins */
-    "plugins"    : "/usr/local/lib/mapnik2/input/",
+    "plugins"    : "/usr/local/lib/mapnik/input/",
     
     /** required: number of threads to support - should match roughly number of CPU + 1 */
     "threads"    :  2,
