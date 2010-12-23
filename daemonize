@@ -1,4 +1,4 @@
-#!sh
+#!/bin/sh
 # requires http://bmc.github.com/daemonize/
 # git clone git://github.com/bmc/daemonize.git
 daemonize -c `pwd` `pwd`/paleoserver2 config.json
