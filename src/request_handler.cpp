@@ -166,8 +166,8 @@ void request_handler::handle_request(const request& req, reply& rep)
       return;  
   }
 
-  unsigned w;
-  unsigned h;
+  unsigned w(0);
+  unsigned h(0);
 
   if (!wms_query.get_width(w) || !wms_query.get_height(h))
   {
@@ -176,6 +176,15 @@ void request_handler::handle_request(const request& req, reply& rep)
           << " got height value of: " << h << "\n"; 
       rep = reply::reply_html(s_error.str());
       //rep = reply::stock_reply(reply::bad_request);
+      return;  
+  }
+  
+  if (w <= 0 || h <= 0 )
+  {
+      std::ostringstream s_error;
+      s_error << "width and height must be > 0. got width value of: " << w
+          << " got height value of: " << h << "\n"; 
+      rep = reply::reply_html(s_error.str());
       return;  
   }
 
