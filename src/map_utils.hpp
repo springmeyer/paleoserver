@@ -32,7 +32,7 @@ inline bool parse_bbox_from_string(Envelope<double>& box, const std::string& bbo
 {
   
     
-    boost::char_separator<char> sep(",");
+    boost::char_separator<char> sep(", ");
     boost::tokenizer<boost::char_separator<char> > tok(bbox_string,sep);
     unsigned i = 0;
     bool success = false; 
