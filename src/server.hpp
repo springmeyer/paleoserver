@@ -41,6 +41,8 @@ public:
 
   /// Stop the server.
   void stop();
+  
+  void start_accept();
 
 private:
   /// Handle completion of an asynchronous accept operation.

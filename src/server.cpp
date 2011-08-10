@@ -53,17 +53,13 @@ server::server(const std::string& address, const std::string& port,
     stylesheet_(stylesheet)
 {
   // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-  boost::asio::ip::tcp::resolver resolver(acceptor_.io_service());
+  boost::asio::ip::tcp::resolver resolver(acceptor_.get_io_service());
   boost::asio::ip::tcp::resolver::query query(address, port);
   boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(query);
   acceptor_.open(endpoint.protocol());
   acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
   acceptor_.bind(endpoint);
   acceptor_.listen();
-  acceptor_.async_accept(new_connection_->socket(),
-      boost::bind(&server::handle_accept, this,
-        boost::asio::placeholders::error));
-  
   if (max_extent) request_handler_.set_max_extent(*max_extent);
   
 #ifdef MAP_PER_IO
@@ -72,12 +68,27 @@ server::server(const std::string& address, const std::string& port,
   boost::shared_ptr<mapnik::Map> map_(new mapnik::Map(256,256));
   mapnik::load_map(*map_,stylesheet_);
   request_handler_.set_map(map_);
-#endif  
+#endif
+  start_accept();  
 }
 
 void server::run()
 {
   io_service_pool_.run();
+}
+
+void server::start_accept()
+{
+  acceptor_.async_accept(new_connection_->socket(),
+      boost::bind(&server::handle_accept, this,
+        boost::asio::placeholders::error));
+
+  /*new_connection_.reset(new connection(
+        io_service_pool_.get_io_service(), request_handler_));
+  acceptor_.async_accept(new_connection_->socket(),
+      boost::bind(&server::handle_accept, this,
+        boost::asio::placeholders::error));
+        */
 }
 
 void server::stop()
