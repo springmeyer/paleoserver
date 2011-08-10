@@ -5,7 +5,7 @@ from SCons.SConf import *
 from SCons.Script import *
 
 # library name, either 'mapnik' for Mapnik 0.7.x or 'mapnik2' for Mapnik trunk
-mapnik = 'mapnik'
+mapnik = 'mapnik2'
 #mapnik = 'mapnik'
 
 # build against a Framework install of Mapnik (for osx)
