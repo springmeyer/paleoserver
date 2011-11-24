@@ -23,8 +23,8 @@ Dane Springmeyer <dane - at - dbsgeo.com> with any questions.
 
 # Requires
 
-* Mapnik 0.7.2 or 2.0.x (http://svn.mapnik.org/trunk)
-* Boost >= 1.42 (for spirit2)
+* Mapnik >=2.0.x
+* Boost >= 1.42
 * Scons (for build)
 
 
@@ -41,7 +41,6 @@ Install scons:
 
     sudo easy_install scons
 
-Set your mapnik version in SConstruct (mapnik or mapnik2)
 
 You will also likely need to manually tweak the compile paths and flags in SConstruct. The trick is to get paths to libicuuc, libfreetype, libboost*, and libmapnik in the compile lines
     
@@ -53,15 +52,11 @@ Next edit the config.json to customize to your mapnik setup.
 
 Then run:
 
-    # for mapnik2
-    ./paleoserver2 config.json
-
-    # for mapnik 0.7.2:
     ./paleoserver config.json
  
 Or just pass all required options on the command line like:
 
-  ./paleoserver2 0.0.0.0 8000 2 . /usr/local/lib/mapnik2 demo/world_latlon.xml
+  ./paleoserver 0.0.0.0 8000 2 . /usr/local/lib/mapnik demo/world_latlon.xml
 
 
 # Supports

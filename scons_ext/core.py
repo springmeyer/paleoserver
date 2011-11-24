@@ -4,13 +4,6 @@ from SCons.SConf import *
 
 from SCons.Script import *
 
-# library name, either 'mapnik' for Mapnik 0.7.x or 'mapnik2' for Mapnik trunk
-mapnik = 'mapnik2'
-#mapnik = 'mapnik'
-
-# build against a Framework install of Mapnik (for osx)
-FRAMEWORK = False
-
 # build with debug output
 DEBUG = False
 
@@ -32,32 +25,10 @@ def main():
     
     env['CXX'] = os.environ.get('CXX') or 'g++'
     
-    env['LIBS'] = [mapnik,'icuuc','boost_filesystem','boost_regex','boost_system','boost_thread']
-    env['CPPPATH'] = ['/usr/local/include']
-    env['LIBPATH'] = ['/usr/local/lib']
-    
-    if FRAMEWORK:
-      fm_path = '/Library/Frameworks/Mapnik.framework/Versions/Current/unix/'
-      env['CPPPATH'].insert(0,'%sinclude' % fm_path)
-      env['LIBPATH'].insert(0,'%slib' % fm_path)  
-    
-    # add freetype paths
-    env.ParseConfig('freetype-config --libs --cflags')
-    
-    # add xml2 paths
-    env.ParseConfig('xml2-config --cflags --libs')
-    
-    if mapnik == 'mapnik2':
-        pass#env.ParseConfig('mapnik-config --libs --cppflags')
-    else:
-        if not FRAMEWORK:
-            env['CPPPATH'].insert(0,'/usr/local/include/')
-    
-    cppflags = '-O3 -ansi -Wall'
-    
-    if 'mapnik2' in env['LIBS']:
-        cppflags += ' -DUSING_MAPNIK2'
-    
+    env.ParseConfig('mapnik-config --ldflags --libs --dep-libs --cflags')
+        
+    cppflags = ''
+        
     if COPY_MAP_PER_THREAD:
         # instead of sharing a single map
         # for every request instead load
