@@ -27,8 +27,9 @@
 #include <mapnik/map.hpp>
 #include <mapnik/datasource_cache.hpp>
 #include <mapnik/agg_renderer.hpp>
-#include <mapnik/filter_factory.hpp>
+#include <mapnik/expression.hpp>
 #include <mapnik/color_factory.hpp>
+#include <mapnik/graphics.hpp>
 #include <mapnik/image_util.hpp>
 #include <mapnik/load_map.hpp>
 
@@ -224,7 +225,7 @@ void request_handler::handle_request(const request& req, reply& rep)
       {
           BOOST_FOREACH ( layer & lyr, map_->layers() )
           {
-              lyr.setActive(true);
+              lyr.set_active(true);
           }
       }
       else
@@ -235,7 +236,7 @@ void request_handler::handle_request(const request& req, reply& rep)
           BOOST_FOREACH ( layer & lyr, map_->layers() )
           {
               bool requested = (layer_names.find(lyr.name()) != layer_names.end());
-              lyr.setActive(requested);
+              lyr.set_active(requested);
           }
       }
 
