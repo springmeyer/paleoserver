@@ -15,6 +15,8 @@ You may also be interested in mod_mapnik_wms which runs within Apache:
 
 The main difference is that paleoserver leverages boost::asio for multithreading rather than Apache and can be run from the command line or as a daemon without depending on another webserver for deployment. The draw back is that this lacks the flexibility for custom setup (urls, auth, etc) that comes easily with Apache.
 
+See also another experimental server written in javascript which is slightly faster: https://github.com/mapbox/landspeed.js
+
 
 ## Contact
 
@@ -23,7 +25,7 @@ Dane Springmeyer <dane - at - dbsgeo.com> with any questions.
 
 # Requires
 
-* Mapnik >=2.0.x
+* Mapnik >= 2.0.x
 * Boost >= 1.42
 * Scons (for build)
 
