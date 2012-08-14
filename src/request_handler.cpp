@@ -26,17 +26,18 @@
 #include <mapnik/version.hpp>
 #include <mapnik/map.hpp>
 #include <mapnik/datasource_cache.hpp>
+#include <mapnik/graphics.hpp>
 #include <mapnik/agg_renderer.hpp>
-#include <mapnik/filter_factory.hpp>
 #include <mapnik/color_factory.hpp>
 #include <mapnik/image_util.hpp>
 #include <mapnik/load_map.hpp>
 
-#if MAPNIK_VERSION >= 800
+#if MAPNIK_VERSION >= 200000
    #include <mapnik/box2d.hpp>
    #define Image32 image_32
    #define ImageData32 image_data_32
    #define Envelope box2d
+   #define setActive set_active
 #else
    #include <mapnik/envelope.hpp>
    #define zoom_to_box zoomToBox
@@ -215,7 +216,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   }*/
 
   // setup transparent response image
-  image_32 im(w,h);
+  mapnik::image_32 im(w,h);
   
   if (intersects)
   {
@@ -255,7 +256,7 @@ void request_handler::handle_request(const request& req, reply& rep)
           mapnik::request r_(w,h);
           r_.set_srs(map_->srs());
           r_.set_buffer_size(128);
-          boost::optional<color> const& bg = map_->background();
+          boost::optional<mapnik::color> const& bg = map_->background();
           if (bg) r_.set_background(*bg);
           
           r_.zoom_to_box(bbox);
@@ -281,7 +282,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   }
   else
   {
-      boost::optional<color> const& bg = map_->background();
+      boost::optional<mapnik::color> const& bg = map_->background();
       if (bg) im.set_background(*bg);
   }
 
